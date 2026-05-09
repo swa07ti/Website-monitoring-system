@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s # How often to scrape targets by default
+  evaluation_interval: 15s # How often to evaluate rules
+
+scrape_configs:
+  # Job to scrape metrics from our Python Website Monitoring Service
+  - job_name: 'website_monitor'
+    
+    # We can override the global interval for this specific job
+    scrape_interval: 10s
+    
+    static_configs:
+      # Where Prometheus should look for the metrics.
+      # Note: 
+      # - Use 'localhost:8000' if running Prometheus directly on your machine.
+      # - Use 'host.docker.internal:8000' if running Prometheus in Docker while the Python script is running locally.
+      # - Later, when we move everything into Docker Compose, this will become 'backend:8000'.
+      - targets: ['monitor:8000']

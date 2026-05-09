@@ -1,0 +1,11 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    # The URL points to the Prometheus container which will run on port 9090.
+    # Since they will be on the same Docker network, Grafana can resolve 'prometheus' by its service name.
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true

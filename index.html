@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRE Control Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        h1 { margin-top: 0; font-weight: 800; font-size: 2rem; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; color: transparent; }
+        p { color: var(--text-muted); margin-bottom: 30px; line-height: 1.5; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 30px; }
+        input[type="url"], input[type="text"] {
+            flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none; font-size: 1rem;
+        }
+        input:focus { border-color: var(--primary); }
+        button {
+            background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem;
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .url-list { list-style: none; padding: 0; margin: 0; }
+        .url-item {
+            display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 10px; transition: 0.2s;
+        }
+        .url-item:hover { background: rgba(255,255,255,0.05); }
+        .remove-btn { background: #ef4444; padding: 8px 16px; font-size: 0.875rem; }
+        .remove-btn:hover { background: #dc2626; }
+        .links { margin-top: 30px; display: flex; gap: 15px; justify-content: center; border-top: 1px solid var(--glass-border); padding-top: 20px;}
+        .links a { text-decoration: none; color: #38bdf8; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; }
+        .links a:hover { color: #7dd3fc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SRE Control Center</h1>
+        <p>This is the central API where we dynamically register endpoints. The background engine will continuously probe these and feed the SLI data into Prometheus.</p>
+        
+        <form action="/add" method="POST" class="input-group">
+            <input type="text" name="url" placeholder="e.g. https://www.amazon.com" required>
+            <button type="submit">+ Add Target</button>
+        </form>
+
+        <ul class="url-list">
+            {% for url in urls %}
+            <li class="url-item">
+                <span style="word-break: break-all;">{{ url }}</span>
+                <form action="/remove" method="POST" style="margin:0;">
+                    <input type="hidden" name="url" value="{{ url }}">
+                    <button type="submit" class="remove-btn">Remove</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <div class="links">
+            <a href="http://localhost:3001" target="_blank">📊 View Grafana Dashboards</a>
+            <span style="color:var(--glass-border)">|</span>
+            <a href="/metrics" target="_blank">⚙️ Raw Prometheus Data</a>
+        </div>
+    </div>
+</body>
+</html>

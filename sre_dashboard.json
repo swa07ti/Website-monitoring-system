@@ -1,0 +1,100 @@
+{
+  "title": "Advanced SRE: Service Level Objectives (SLO)",
+  "uid": "sre-advanced-dashboard",
+  "tags": ["sre", "advanced"],
+  "timezone": "browser",
+  "refresh": "5s",
+  "schemaVersion": 36,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Current Status (SLI)",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        { "expr": "website_up", "legendFormat": "{{url}}" }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": { "color": "dark-red", "index": 1, "text": "DOWN" },
+                "1": { "color": "dark-green", "index": 0, "text": "UP" }
+              },
+              "type": "value"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Uptime SLA (%)",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "clamp_max(100 - ((website_checks_failed_total / website_checks_total) * 100), 100)",
+          "legendFormat": "{{url}}"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 90 },
+              { "color": "green", "value": 99.0 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency Tracking (Response Time)",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        { "expr": "website_response_time_ms", "legendFormat": "{{url}}" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth", "lineWidth": 3, "fillOpacity": 15 },
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Status Codes Over Time",
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        { "expr": "website_http_status_code", "legendFormat": "{{url}}" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "points", "pointSize": 5 },
+          "decimals": 0
+        }
+      }
+    }
+  ]
+}
